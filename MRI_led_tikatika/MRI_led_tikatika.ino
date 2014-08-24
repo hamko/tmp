@@ -1,53 +1,72 @@
 #include <MsTimer2.h>
 #include <stdio.h>
+#include <hidboot.h>
+// Satisfy IDE, which only needs to see the include statment in the ino.
+#ifdef dobogusinclude
+#include <spi4teensy3.h>
+#endif
+
+#include "printf_wrapper.h"
+
+// 7-13: Disabled by Shield!!
 #define LED 13
 #define SW 1   // yet
 #define DT 100 // ms: control cycle
 #define BLINK_TIME 5000
 
-static FILE uartout;
+class KbdRptParser : public KeyboardReportParser
+{
+protected:
+  virtual void OnKeyDown(uint8_t mod, uint8_t key);
+  virtual void OnKeyUp(uint8_t mod, uint8_t key);
+};
 
-static int uart_putchar (char c, FILE *stream) {
-    if (Serial.write(c) > 0) {
-      return 0;
-    } else {
-      return -1;
-    }
+int g_trigger_counter = 0;
+void KbdRptParser::OnKeyDown(uint8_t mod, uint8_t key)
+{
+  g_trigger_counter++;
+  printf("%c, %d\n", OemToAscii(mod, key), g_trigger_counter);
+}
+void KbdRptParser::OnKeyUp(uint8_t mod, uint8_t key) {
+  printf("test\n");
 }
 
-int t = 0; // counter for control cycle
+
+USB     Usb;
+HIDBoot<HID_PROTOCOL_KEYBOARD>    HidKeyboard(&Usb);
+KbdRptParser Prs;
+
+// Timer Callback Function
+long t = 0; // counter for control cycle
 void flash() {
   t++; 
-  
-  // LED blink
-  static int t_led = 0; // counter for LED blink
-  if (!t_led && digitalRead(SW)) {  // start
-    printf("s%d\n", t * DT);
-    t_led = 1;
-  }
-  if (t_led > BLINK_TIME) {         // end
-    printf("e%d\n", t * DT);
-    t_led = 0;
-    digitalWrite(LED, LOW);
-  }
-  if (t_led) {                      // during blink
-    static boolean output = HIGH;
-
-    digitalWrite(LED, output);
-    output = !output;
-    t_led++;
-  }
+  printf("%ld, %d\n", t * DT, (t/10)%2);  
 }
 
 void setup() {
+  // Pin Settings
   pinMode(LED, OUTPUT);
   pinMode(SW, INPUT);
-  Serial.begin(9600);
-  printf("c: %d ms, b: %d ms", DT, BLINK_TIME);
   
-  MsTimer2::set(DT, flash); // 500ms period
+  // Serial Settings
+  Serial.begin( 115200 );
+  fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
+  stdout = &uartout;
+  while (!Serial); // Wait for serial port to connect - used on Leonardo, Teensy and other boards with built-in USB CDC serial connection
+
+  // Timer Interruption  
+  MsTimer2::set(DT, flash);
   MsTimer2::start();
+
+  // USB
+  if (Usb.Init() == -1)
+    Serial.println("OSC did not rt.");
+  delay( 200 );
+
+  // HIDKeyboard callback
+  HidKeyboard.SetReportParser(0, (HIDReportParser*)&Prs);
 }
 
 void loop() {
+  Usb.Task();
 }
