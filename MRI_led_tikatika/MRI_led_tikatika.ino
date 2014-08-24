@@ -7,30 +7,24 @@
 #endif
 
 #include "printf_wrapper.h"
+#include "settings.h"
 
 // 7-13: Disabled by Shield!!
 #define LED 13
 #define SW 1   // yet
-#define DT 100 // ms: control cycle
-#define BLINK_TIME 5000
 
 class KbdRptParser : public KeyboardReportParser
 {
 protected:
   virtual void OnKeyDown(uint8_t mod, uint8_t key);
-  virtual void OnKeyUp(uint8_t mod, uint8_t key);
 };
 
-int g_trigger_counter = 0;
+long g_trigger_counter = 0;
 void KbdRptParser::OnKeyDown(uint8_t mod, uint8_t key)
 {
   g_trigger_counter++;
-  printf("%c, %d\n", OemToAscii(mod, key), g_trigger_counter);
+//  printf("%c, %d\n", OemToAscii(mod, key), g_trigger_counter);
 }
-void KbdRptParser::OnKeyUp(uint8_t mod, uint8_t key) {
-  printf("test\n");
-}
-
 
 USB     Usb;
 HIDBoot<HID_PROTOCOL_KEYBOARD>    HidKeyboard(&Usb);
@@ -38,9 +32,17 @@ KbdRptParser Prs;
 
 // Timer Callback Function
 long t = 0; // counter for control cycle
+static long pre_counter = g_trigger_counter;
+void proc_triggered(void) {
+  printf("%ld\n", t * DT);
+}
+
 void flash() {
   t++; 
-  printf("%ld, %d\n", t * DT, (t/10)%2);  
+  if (pre_counter != g_trigger_counter) {
+    proc_triggered();  
+  }
+  pre_counter = g_trigger_counter;
 }
 
 void setup() {
@@ -65,6 +67,7 @@ void setup() {
 
   // HIDKeyboard callback
   HidKeyboard.SetReportParser(0, (HIDReportParser*)&Prs);
+  printf("Start\n");
 }
 
 void loop() {
