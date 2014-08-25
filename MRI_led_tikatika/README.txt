@@ -1,0 +1,22 @@
+*seq
+-提示条件行列seqは，時間[ms]を2要素ずつセットで記述することで，消灯時間の範囲を規定する．
+--seqは昇順ソート済みでなければならない
+--length(seq)は偶数でなければならない
+--例えばseq=[a1 a2 b1 b2]であれば「a1<=t<a2とb1<=t<b2で点灯」の意味．
+-例(o:点灯, x:消灯, 一文字は1msごと)
+--xoxは，seq=[1 2]
+--xxoooxxxxxは，seq=[2 5]
+--xxoooxxooxは，seq=[2 5 7 9]
+--oooooooxxxは，seq=[0 7]
+--xxxxxxooooは，seq=[6 10]
+
+*len
+-lenは，対応するseqの提示時間[ms]を記述することで，提示条件の時間を規定する．
+-例(o:点灯, x:消灯, 一文字は1msごと)
+--xxoxは，len=4
+--xxoooxxxxxは，len=10
+
+*tran
+-提示条件遷移行列seqは，提示条件の順番を記述する．
+-例
+--seq1->seq2->seq0->seq5は，seq=[1, 2, 0, 5]
