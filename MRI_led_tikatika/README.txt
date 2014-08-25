@@ -1,8 +1,23 @@
+*Install
+-http://arduino.cc/en/Main/Software のWindows InstallerでArduino IDEをインストール
+-https://github.com/hamko/tmp のDownload ZIPでダウンロードし，デスクトップに展開
+-中に入っているMRI_led_tikatika/librariesフォルダを，マイドキュメント/Arduinoの中にコピー
+-Arduino IDEを起動する．
+-ファイル/開くから，デスクトップ/***/MRI_led_tikatika/MRI_led_tikatika.inoを開く．
+-Ctl-Uを押してマイコンにプログラムを書き込む．
+-Arduino IDEの眼鏡マークをクリックして，右下のbaudを115200に合わせる．
+-通信できるようになる．
+
+*提示条件の書き換え
+-TODO
+
 *seq
 -提示条件行列seqは，時間[ms]を2要素ずつセットで記述することで，消灯時間の範囲を規定する．
+--例えばseq=[a1 a2 b1 b2]であれば「a1<=t<a2とb1<=t<b2で点灯」の意味．
+-注意
+--seqの時間は0から始まる
 --seqは昇順ソート済みでなければならない
 --length(seq)は偶数でなければならない
---例えばseq=[a1 a2 b1 b2]であれば「a1<=t<a2とb1<=t<b2で点灯」の意味．
 -例(o:点灯, x:消灯, 一文字は1msごと)
 --xoxは，seq=[1 2]
 --xxoooxxxxxは，seq=[2 5]
