@@ -8,10 +8,10 @@
 
 #include "printf_wrapper.h"
 #include "settings.h"
-
-// 7-13: Disabled by Shield!!
-#define LED 13
-#define SW 1   // yet
+#include "drive_led.h"
+#include "updown.h"
+#include "transit_seq.h"
+#include "data.h"
 
 class KbdRptParser : public KeyboardReportParser
 {
@@ -32,29 +32,58 @@ KbdRptParser Prs;
 
 // Timer Callback Function
 long t = 0; // counter for control cycle
-static long pre_counter = g_trigger_counter;
 void proc_triggered(void) {
   printf("%ld\n", t * DT);
 }
+void control(void) {
+  if (g_trigger_counter == 3) {
+    int seq[] = {0, 1, 2, 0};
+    if (transit_seq(seq, sizeof(seq)/sizeof(seq[0])) == -1) {
+      printf("seq done\n");
+    }
+    /*
+    if (updown(data[0].seq, data[0].len, data[0].seqdone, 0, 0) == -1) {
+      printf("seq done\n");
+    }
+    */
+  }
+  /*
+  if (g_trigger_counter % 2) 
+    setLED(0, 0, HIGH);
+  else 
+    setLED(0, 0, LOW);
+  */
+}
 
+static long pre_counter = g_trigger_counter;
 void flash() {
   t++; 
   if (pre_counter != g_trigger_counter) {
     proc_triggered();  
   }
+  control();
   pre_counter = g_trigger_counter;
+  driveLED();
 }
 
 void setup() {
   // Pin Settings
-  pinMode(LED, OUTPUT);
-  pinMode(SW, INPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(16, OUTPUT);
+  pinMode(17, OUTPUT);
+  pinMode(18, OUTPUT);
   
   // Serial Settings
   Serial.begin( 115200 );
   fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
   stdout = &uartout;
-  while (!Serial); // Wait for serial port to connect - used on Leonardo, Teensy and other boards with built-in USB CDC serial connection
+  while (!Serial);
 
   // Timer Interruption  
   MsTimer2::set(DT, flash);
@@ -67,6 +96,11 @@ void setup() {
 
   // HIDKeyboard callback
   HidKeyboard.SetReportParser(0, (HIDReportParser*)&Prs);
+  
+  // updown
+  init_updown();
+  set_data();
+  
   printf("Start\n");
 }
 
