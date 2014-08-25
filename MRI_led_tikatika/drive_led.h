@@ -4,5 +4,5 @@
 
 extern void setLED(int x, int y, boolean out);
 extern void driveLED(void);
-
+extern void turnoffLED(void);
 #endif

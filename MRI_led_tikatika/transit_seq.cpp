@@ -13,7 +13,7 @@ int transit_seq(int* tran, int tranlen) {
   boolean done = 0;
   for (int x = 0; x < XNUM; x++) {
     for (int y = 0; y < YNUM; y++) {
-      if (updown(data[s].seq, data[s].len, data[s].seqlen, x, y) == -1) { // TODO seq, lenにx, yの情報がない．全部同じ時系列になってる
+      if (updown(data[s].seq[x][y], data[s].len[x][y], data[s].seqlen[x][y], x, y) == -1) { // TODO seq, lenにx, yの情報がない．全部同じ時系列になってる
         done = 1;
       }
     }

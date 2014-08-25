@@ -3,6 +3,14 @@
 #include "printf_wrapper.h"
 
 static boolean led_state[XNUM][YNUM];
+
+void turnoffLED(void)
+{
+  for (int x = 0; x < XNUM; x++) 
+    for (int y = 0; y < YNUM; y++) 
+      led_state[x][y] = LOW;
+}
+
 void setLED(int x, int y, boolean out) {
   led_state[x][y] = out;
 }
@@ -22,4 +30,4 @@ void driveLED(void){
   digitalWrite(16, led_state[x][5]);
   digitalWrite(17, led_state[x][6]);
   digitalWrite(18, led_state[x][7]);
-} 
+}
