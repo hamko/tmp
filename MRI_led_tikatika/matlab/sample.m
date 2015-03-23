@@ -2,8 +2,8 @@ seqs = {}; % All sequences
 
 % Set Seq 1
 setting_index = 1;
-seqlen = 1500;
-seq = {
+seqlen = 1600; % [ms]
+seq = { % [ms]
     [0,100]
     [100,200]
     [200,300]
@@ -25,6 +25,98 @@ seqs{setting_index, 2} = seqlen;
 
 % Set Seq 2
 setting_index = 2;
+seqlen = 150; % [ms]
+seq = { % [ms]
+    [0,10]
+    [10,20]
+    [20,30]
+    [30,40]
+    [40,50]
+    [50,60]
+    [60,70]
+    [70,80]
+    [80,90]
+    [90,100]
+    [100,110]
+    [110,120]
+    [120,130]
+    [130,140]
+    [140,150]
+    };
+seqs{setting_index, 1} = seq;
+seqs{setting_index, 2} = seqlen;
+
+% Set Seq 3
+setting_index = 3;
+seqlen = 150;
+seq = {
+    [0,10]
+    [10,20]
+    [20,30]
+    [30,40]
+    [40,50]
+    [50,60]
+    [60,70]
+    [70,80]
+    [80,90]
+    [90,100]
+    [100,110]
+    [110,120]
+    [120,130]
+    [130,140]
+    [140,150]
+    };
+seqs{setting_index, 1} = seq;
+seqs{setting_index, 2} = seqlen;
+
+% Set Seq 4
+setting_index = 4;
+seqlen = 150; % [ms]
+seq = { % [ms]
+    [0,10]
+    [10,20]
+    [20,30]
+    [30,40]
+    [40,50]
+    [50,60]
+    [60,70]
+    [70,80]
+    [80,90]
+    [90,100]
+    [100,110]
+    [110,120]
+    [120,130]
+    [130,140]
+    [140,150]
+    };
+seqs{setting_index, 1} = seq;
+seqs{setting_index, 2} = seqlen;
+
+% Set Seq 5
+setting_index = 5;
+seqlen = 150;
+seq = {
+    [0,10]
+    [10,20]
+    [20,30]
+    [30,40]
+    [40,50]
+    [50,60]
+    [60,70]
+    [70,80]
+    [80,90]
+    [90,100]
+    [100,110]
+    [110,120]
+    [120,130]
+    [130,140]
+    [140,150]
+    };
+seqs{setting_index, 1} = seq;
+seqs{setting_index, 2} = seqlen;
+
+% Set Seq 6
+setting_index = 6;
 seqlen = 150;
 seq = {
     [0,10]
@@ -47,7 +139,11 @@ seqs{setting_index, 1} = seq;
 seqs{setting_index, 2} = seqlen;
 
 % Set Transition matrix
-tran = {[1,2,3,4];[0,1,0]};
+% The order of seqs
+tran = {[1,2,3,4];[0,1,0];[1,2,3,4];[0,1,0];[1,2,3,4];[0,1,0];};
+
+mri_dt_nanosec = 1000000000;
 
 set_seq(seqs);
 set_tran(tran);
+mri_dt(mri_dt_nanosec);
